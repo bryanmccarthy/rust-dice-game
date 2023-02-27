@@ -16,15 +16,17 @@ pub fn game_loop() {
     let choice = menu_choice();
     match choice {
       1 => higher_lower(&mut tokens),
-      2 => break,
+      2 => snake_eyes(&mut tokens),
+      3 => break,
       _ => not_an_option(),
     }
   }
 }
 
 fn menu() {
-  println!("(1) Higher Lower (1 Token)");
-  println!("(2) Exit");
+  println!("(1) Higher Lower (Win 1 Token, Lose 1 Token)");
+  println!("(2) Snake Eyes (Win 3 Tokens, Lose 1 Token)");
+  println!("(3) Exit");
 }
 
 fn not_an_option() {
@@ -102,4 +104,39 @@ fn y_or_n() -> bool {
   io::stdin().read_line(&mut input).unwrap();
 
   return input.to_ascii_lowercase().starts_with("y");
+}
+
+fn snake_eyes(tokens: &mut i32) {
+  loop {
+    if *tokens < 1 {
+      println!("\nNot enough tokens");
+      break;
+    }
+
+    println!("\n* Snake Eyes -- Roll two 1's in a row to win *");
+    println!("Rolling...");
+
+    let mut rolled_number = dice_roll();
+    println!("You rolled a {}", rolled_number);
+
+    if rolled_number == 1 {
+      println!("Rolling again...");
+      rolled_number = dice_roll();
+      println!("You rolled a {}", rolled_number);
+      if rolled_number == 1 {
+        println!("You win 3 Tokens!");
+        *tokens += 3;
+      } else {
+        println!("You Lose 1 Token");
+        *tokens -= 1;
+      }
+
+      println!("\nplay again? (y/n)");
+      let ans = y_or_n();
+      if ans == false {
+        println!("exiting...");
+        break;
+      }
+    }
+  }
 }
